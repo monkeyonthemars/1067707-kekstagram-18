@@ -1,3 +1,5 @@
+'use strict';
+
 var COUNTER = 25;
 var LIKE_MIN = 15;
 var LIKE_MAX = 200;
@@ -20,27 +22,27 @@ var getRandomElement = function (array) {
 var getPictures = function () {
   var pictures = [];
 
-  for (i = 1; i <= COUNTER; i++) {
+  for (var i = 1; i <= COUNTER; i++) {
 
     var photoComments = [];
     var countComment = Math.round(Math.random()) + 1;
-    for (n = 0; n < countComment; n++) {
+    for (var n = 0; n < countComment; n++) {
       photoComments.push(getRandomElement(COMMENTS));
     }
 
     pictures.push(
-      {
-        url: 'photos/' + i + '.jpg',
-        description: 'Описание фотографии',
-        likes: Math.round(Math.random() * (LIKE_MAX - LIKE_MIN + 1)) + LIKE_MIN,
-        comments: photoComments,
-        name: getRandomElement(NAMES)
-      }
+        {
+          url: 'photos/' + i + '.jpg',
+          description: 'Описание фотографии',
+          likes: Math.round(Math.random() * (LIKE_MAX - LIKE_MIN + 1)) + LIKE_MIN,
+          comments: photoComments,
+          name: getRandomElement(NAMES)
+        }
     );
   }
 
   return pictures;
-}
+};
 
 var renderPicture = function (picture) {
   var pictureElement = pictureTemplate.cloneNode(true);
