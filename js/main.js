@@ -1,8 +1,12 @@
 'use strict';
 
-var COUNTER = 25;
-var LIKE_MIN = 15;
-var LIKE_MAX = 200;
+var PICTURES_COUNT = 25;
+var MIN_LIKES_COUNT = 15;
+var MAX_LIKES_COUNT = 200;
+var MIN_AVATAR_NUMBER = 1;
+var MAX_AVATAR_NUMBER = 6;
+var MIN_COMMENTS_COUNT = 1;
+var MAX_COMMENTS_COUNT = 4;
 
 var COMMENTS = [
   'Всё отлично!',
@@ -13,30 +17,47 @@ var COMMENTS = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
+var DESCRIPTIONS = [
+  'Именно так выглядит совместное фото команды, когда её часть работает удалённо.',
+  'Мы долго думали, как новичкам в веб-разработке оттачивать свои навыки и пополнять портфолио, пока они находятся в поиске работы.',
+  'Пятничный привет от команды кураторов, скрывающихся под иконкой седовласого мудреца.',
+  'Ещё не остыла новость о релизе первой главы курса «Основы PHP», как мы выпустили вторую — «Условия».',
+  'Наша выпускница Татьяна специализировалась на металлургии и занималась внешней торговлей, а теперь работает фронтенд-разработчицей.',
+  'Подвели итоги розыгрыша и показали в сторис.'
+];
+
 var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 
-var getRandomElement = function (array) {
+var getRandomElementArray = function (array) {
   return array[Math.round(Math.random() * (array.length - 1))];
+};
+
+var getRandomValueInterval = function (min, max) {
+  return Math.round(Math.random() * (max - min)) + min;
 };
 
 var getPictures = function () {
   var pictures = [];
-
-  for (var i = 1; i <= COUNTER; i++) {
-
+  for (var i = 1; i <= PICTURES_COUNT; i++) {
     var photoComments = [];
-    var countComment = Math.round(Math.random()) + 1;
-    for (var n = 0; n < countComment; n++) {
-      photoComments.push(getRandomElement(COMMENTS));
+
+    var commentsCount = getRandomValueInterval(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
+    for (var n = 0; n < commentsCount; n++) {
+      photoComments.push(
+          {
+            avatar: 'img/avatar-' + getRandomValueInterval(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER) + '.svg',
+            message: getRandomElementArray(COMMENTS),
+            name: getRandomElementArray(NAMES)
+          }
+      );
     }
 
     pictures.push(
         {
           url: 'photos/' + i + '.jpg',
-          description: 'Описание фотографии',
-          likes: Math.round(Math.random() * (LIKE_MAX - LIKE_MIN + 1)) + LIKE_MIN,
-          comments: photoComments,
-          name: getRandomElement(NAMES)
+          description: getRandomElementArray(DESCRIPTIONS),
+          likes: getRandomValueInterval(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
+          comments: photoComments
         }
     );
   }
@@ -44,11 +65,13 @@ var getPictures = function () {
   return pictures;
 };
 
+var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
 var renderPicture = function (picture) {
   var pictureElement = pictureTemplate.cloneNode(true);
   pictureElement.querySelector('.picture__img').src = picture.url;
-  pictureElement.querySelector('.picture__likes').textContent = picture.likes;
-  pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
+  pictureElement.querySelector('.picture__likes').textContent = String(picture.likes);
+  pictureElement.querySelector('.picture__comments').textContent = String(picture.comments.length);
 
   return pictureElement;
 };
@@ -62,8 +85,7 @@ var renderListPictures = function (listPictures) {
   return fragment;
 };
 
-var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-var pictures = getPictures();
+var listPictures = getPictures();
 
 var picturesListElement = document.querySelector('.pictures');
-picturesListElement.appendChild(renderListPictures(pictures));
+picturesListElement.appendChild(renderListPictures(listPictures));
