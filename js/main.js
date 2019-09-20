@@ -28,11 +28,11 @@ var DESCRIPTIONS = [
 
 var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 
-var getRandomElementArray = function (array) {
+var getRandomElementFromArray = function (array) {
   return array[Math.round(Math.random() * (array.length - 1))];
 };
 
-var getRandomValueInterval = function (min, max) {
+var getRandomIntegerFromInterval = function (min, max) {
   return Math.round(Math.random() * (max - min)) + min;
 };
 
@@ -41,13 +41,13 @@ var getPictures = function () {
   for (var i = 1; i <= PICTURES_COUNT; i++) {
     var photoComments = [];
 
-    var commentsCount = getRandomValueInterval(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
+    var commentsCount = getRandomIntegerFromInterval(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
     for (var n = 0; n < commentsCount; n++) {
       photoComments.push(
           {
-            avatar: 'img/avatar-' + getRandomValueInterval(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER) + '.svg',
-            message: getRandomElementArray(COMMENTS),
-            name: getRandomElementArray(NAMES)
+            avatar: 'img/avatar-' + getRandomIntegerFromInterval(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER) + '.svg',
+            message: getRandomElementFromArray(COMMENTS),
+            name: getRandomElementFromArray(NAMES)
           }
       );
     }
@@ -55,8 +55,8 @@ var getPictures = function () {
     pictures.push(
         {
           url: 'photos/' + i + '.jpg',
-          description: getRandomElementArray(DESCRIPTIONS),
-          likes: getRandomValueInterval(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
+          description: getRandomElementFromArray(DESCRIPTIONS),
+          likes: getRandomIntegerFromInterval(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
           comments: photoComments
         }
     );
@@ -70,8 +70,8 @@ var pictureTemplate = document.querySelector('#picture').content.querySelector('
 var renderPicture = function (picture) {
   var pictureElement = pictureTemplate.cloneNode(true);
   pictureElement.querySelector('.picture__img').src = picture.url;
-  pictureElement.querySelector('.picture__likes').textContent = String(picture.likes);
-  pictureElement.querySelector('.picture__comments').textContent = String(picture.comments.length);
+  pictureElement.querySelector('.picture__likes').textContent = picture.likes;
+  pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
 
   return pictureElement;
 };
