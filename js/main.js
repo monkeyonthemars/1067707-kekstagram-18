@@ -114,13 +114,12 @@ var renderListComments = function (picture) {
 };
 
 var renderBigPicture = function (picture) {
+  var listComments = renderListComments(picture);
+  var commentsListElement = bigPictureElement.querySelector('.social__comments');
   bigPictureElement.querySelector('.big-picture__img img').src = picture.url;
   bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
   bigPictureElement.querySelector('.comments-count').textContent = picture.comments.length;
   bigPictureElement.querySelector('.social__caption').textContent = picture.description;
-
-  var listComments = renderListComments(picture);
-  var commentsListElement = bigPictureElement.querySelector('.social__comments');
   commentsListElement.innerHTML = '';
   commentsListElement.appendChild(listComments);
 };
