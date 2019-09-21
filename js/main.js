@@ -89,3 +89,36 @@ var listPictures = getPictures();
 
 var picturesListElement = document.querySelector('.pictures');
 picturesListElement.appendChild(renderListPictures(listPictures));
+
+// module3-task3
+var bigPictureElement = document.querySelector('.big-picture');
+bigPictureElement.classList.remove('hidden');
+
+var renderListComments = function (picture) {
+  var fragment = document.createDocumentFragment();
+  for (var n = 0; n < picture.comments.length; n++) {
+    var socialCommentTemplate = bigPictureElement.querySelector('.social__comment').cloneNode(true);
+    var socialPictureTemplateElement = socialCommentTemplate.querySelector('.social__picture');
+    socialPictureTemplateElement.src = picture.comments[n].avatar;
+    socialPictureTemplateElement.alt = picture.comments[n].name;
+    socialCommentTemplate.querySelector('.social__text').textContent = picture.comments[n].message;
+    fragment.appendChild(socialCommentTemplate);
+  }
+
+  return fragment;
+};
+
+var firstPicture = listPictures[0];
+
+bigPictureElement.querySelector('.big-picture__img img').src = firstPicture.url;
+bigPictureElement.querySelector('.likes-count').textContent = firstPicture.likes;
+bigPictureElement.querySelector('.comments-count').textContent = firstPicture.comments.length;
+bigPictureElement.querySelector('.social__caption').textContent = firstPicture.description;
+
+var listComments = renderListComments(firstPicture);
+var commentsListElement = bigPictureElement.querySelector('.social__comments');
+commentsListElement.innerHTML = '';
+commentsListElement.appendChild(listComments);
+
+bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
+bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
