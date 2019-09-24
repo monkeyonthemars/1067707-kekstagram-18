@@ -90,31 +90,29 @@ var listPictures = getPictures();
 var picturesListElement = document.querySelector('.pictures');
 picturesListElement.appendChild(renderListPictures(listPictures));
 
-// module3-task3
 var bigPictureElement = document.querySelector('.big-picture');
-bigPictureElement.classList.remove('hidden');
 
-var renderComment = function (comment) {
-  var socialCommentTemplate = bigPictureElement.querySelector('.social__comment').cloneNode(true);
-  var socialPictureTemplateElement = socialCommentTemplate.querySelector('.social__picture');
-  socialPictureTemplateElement.src = comment.avatar;
-  socialPictureTemplateElement.alt = comment.name;
-  socialCommentTemplate.querySelector('.social__text').textContent = comment.message;
+var getCommentMarkup = function (comment) {
+  var сommentElement = bigPictureElement.querySelector('.social__comment').cloneNode(true);
+  var commentAvatarElement = сommentElement.querySelector('.social__picture');
+  commentAvatarElement.src = comment.avatar;
+  commentAvatarElement.alt = comment.name;
+  сommentElement.querySelector('.social__text').textContent = comment.message;
 
-  return socialCommentTemplate;
+  return сommentElement;
 };
 
-var renderListComments = function (picture) {
+var getCommentsMarkup = function (picture) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < picture.comments.length; i++) {
-    fragment.appendChild(renderComment(picture.comments[i]));
+    fragment.appendChild(getCommentMarkup(picture.comments[i]));
   }
 
   return fragment;
 };
 
 var renderBigPicture = function (picture) {
-  var listComments = renderListComments(picture);
+  var listComments = getCommentsMarkup(picture);
   var commentsListElement = bigPictureElement.querySelector('.social__comments');
   bigPictureElement.querySelector('.big-picture__img img').src = picture.url;
   bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
@@ -125,6 +123,6 @@ var renderBigPicture = function (picture) {
 };
 
 renderBigPicture(listPictures[0]);
-
 bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
 bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
+bigPictureElement.classList.remove('hidden');
