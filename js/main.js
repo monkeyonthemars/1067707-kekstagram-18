@@ -7,6 +7,8 @@ var MIN_AVATAR_NUMBER = 1;
 var MAX_AVATAR_NUMBER = 6;
 var MIN_COMMENTS_COUNT = 1;
 var MAX_COMMENTS_COUNT = 4;
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 
 var COMMENTS = [
   'Всё отлично!',
@@ -27,6 +29,26 @@ var DESCRIPTIONS = [
 ];
 
 var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
+
+var EFFECTS = ['chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+
+var uploadFileInput = document.querySelector('.img-upload__start input[id=upload-file]');
+var imgUploadElement = document.querySelector('.img-upload__overlay');
+var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
+var hashtagsElement = document.querySelector('.text__hashtags');
+var scaleSmallerElement = document.querySelector('.scale__control--smaller');
+var scaleBiggerElement = document.querySelector('.scale__control--bigger');
+var scaleControlInput = document.querySelector('.scale__control--value');
+var effectValueElement = document.querySelector('.effect-level__value');
+var effectLevelPinElement = document.querySelector('.effect-level__pin');
+var effectLevelDepthElement = document.querySelector('.effect-level__depth');
+var effectsListRadio = document.querySelector('.effects__list');
+var imgUploadPreviewElement = document.querySelector('.img-upload__preview img');
+var imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
+var picturesListElement = document.querySelector('.pictures');
+var bigPictureElement = document.querySelector('.big-picture');
+var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+var effectsClassName = 'effects__preview--';
 
 var getRandomElementFromArray = function (array) {
   return array[Math.round(Math.random() * (array.length - 1))];
@@ -65,8 +87,6 @@ var getPictures = function () {
   return pictures;
 };
 
-var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-
 var renderPicture = function (picture) {
   var pictureElement = pictureTemplate.cloneNode(true);
   pictureElement.querySelector('.picture__img').src = picture.url;
@@ -84,13 +104,6 @@ var renderListPictures = function (listPictures) {
 
   return fragment;
 };
-
-var listPictures = getPictures();
-
-var picturesListElement = document.querySelector('.pictures');
-picturesListElement.appendChild(renderListPictures(listPictures));
-
-var bigPictureElement = document.querySelector('.big-picture');
 
 var getCommentMarkup = function (comment) {
   var сommentElement = bigPictureElement.querySelector('.social__comment').cloneNode(true);
@@ -122,7 +135,168 @@ var renderBigPicture = function (picture) {
   commentsListElement.appendChild(listComments);
 };
 
+var scalePreviewSmaller = function () {
+  var currentValue = Number(scaleControlInput.value.replace('%', '')) - 25;
+  if (currentValue < 25) {
+    currentValue = 25;
+  }
+  scaleControlInput.value = currentValue + '%';
+  imgUploadPreviewElement.style.transform = 'scale(' + currentValue / 100 + ')';
+};
+
+var scalePreviewBigger = function () {
+  var currentValue = Number(scaleControlInput.value.replace('%', '')) + 25;
+  if (currentValue > 100) {
+    currentValue = 100;
+  }
+  scaleControlInput.value = currentValue + '%';
+  imgUploadPreviewElement.style.transform = 'scale(' + currentValue / 100 + ')';
+};
+
+var onClickPreviewSmaller = function () {
+  scalePreviewSmaller();
+};
+
+var onClickPreviewBigger = function () {
+  scalePreviewBigger();
+};
+
+var closeImgUpload = function () {
+  imgUploadElement.classList.add('hidden');
+  imgUploadCancelButton.removeEventListener('click', onClickCloseImgUpload);
+  scaleSmallerElement.removeEventListener('click', onClickPreviewSmaller);
+  scaleBiggerElement.removeEventListener('click', onClickPreviewBigger);
+  imgUploadCancelButton.removeEventListener('keydown', onImgUploadCancelEnterPress);
+  effectLevelPinElement.removeEventListener('mouseup', updateEffectLevel);
+  hashtagsElement.removeEventListener('input', checkHashtagsValidity);
+  uploadFileInput.value = '';
+};
+
+var onImgUploadCancelEnterPress = function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE && evt.target === imgUploadCancelButton) {
+    closeImgUpload();
+  }
+};
+
+var updateEffectLevel = function () {
+  effectLevelPinElement.style.left = effectLevelPinElement.style.left;
+  effectLevelDepthElement.style.width = effectLevelPinElement.style.left;
+  effectValueElement.value = effectLevelPinElement.style.left.replace('%', '');
+};
+
+var checkHashtagsValidity = function () {
+  var hashtagsString = hashtagsElement.value;
+
+  while (hashtagsString.indexOf('  ') !== -1) {
+    hashtagsString = hashtagsString.replace('  ', ' ');
+  }
+
+  if (hashtagsString === '' || hashtagsString.length === 1) {
+    return;
+  }
+
+  var hashtags = hashtagsString.split(' ');
+
+  if (hashtags.length > 5) {
+    hashtagsElement.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+    return;
+  }
+
+  for (var i = 0; i < hashtags.length; i++) {
+    if (hashtags[i][0] !== '#') {
+      hashtagsElement.setCustomValidity('Хэш-тег начинается с символа # (решётка): ' + hashtags[i]);
+      return;
+    }
+
+    if (hashtags[i].length === 1) {
+      hashtagsElement.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
+      return;
+    }
+
+    if (hashtags[i].length > 20) {
+      hashtagsElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку: ' + hashtags[i]);
+      return;
+    }
+
+    for (var j = 0; j < hashtags.length; j++) {
+      if (i !== j && hashtags[i].toLowerCase() === hashtags[j].toLowerCase()) {
+        hashtagsElement.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды: ' + hashtags[i]);
+        return;
+      }
+    }
+  }
+
+  hashtagsElement.setCustomValidity('');
+};
+
+var onClickCloseImgUpload = function () {
+  closeImgUpload();
+};
+
+var onImgUploadEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeImgUpload();
+  }
+};
+
+var resetEffectLevel = function () {
+  effectLevelPinElement.style.left = '100%';
+  effectLevelDepthElement.style.width = '100%';
+  effectValueElement.value = '100';
+};
+
+var onEffectsListRadioClick = function (currentEffect) {
+  resetEffectLevel();
+  for (var i = 0; i < EFFECTS.length; i++) {
+    if (imgUploadPreviewElement.classList.contains(effectsClassName + EFFECTS[i])) {
+      imgUploadPreviewElement.classList.remove(effectsClassName + EFFECTS[i]);
+    }
+  }
+
+  if (currentEffect === 'none') {
+    imgUploadEffectLevelElement.classList.add('hidden');
+  } else {
+    imgUploadEffectLevelElement.classList.remove('hidden');
+    imgUploadPreviewElement.classList.add(effectsClassName + currentEffect);
+  }
+};
+
+var resetScalePreview = function () {
+  scaleControlInput.value = '100%';
+  imgUploadPreviewElement.style.transform = 'scale(1)';
+};
+
+hashtagsElement.addEventListener('focus', function () {
+  document.removeEventListener('keydown', onImgUploadEscPress);
+});
+
+hashtagsElement.addEventListener('blur', function () {
+  document.addEventListener('keydown', onImgUploadEscPress);
+});
+
+uploadFileInput.addEventListener('change', function () {
+  imgUploadCancelButton.addEventListener('click', onClickCloseImgUpload);
+  scaleSmallerElement.addEventListener('click', onClickPreviewSmaller);
+  scaleBiggerElement.addEventListener('click', onClickPreviewBigger);
+  document.addEventListener('click', onImgUploadEscPress);
+  imgUploadCancelButton.addEventListener('keydown', onImgUploadCancelEnterPress);
+  effectLevelPinElement.addEventListener('mouseup', updateEffectLevel);
+  hashtagsElement.addEventListener('input', checkHashtagsValidity);
+  imgUploadElement.classList.remove('hidden');
+  imgUploadEffectLevelElement.classList.add('hidden');
+  resetScalePreview();
+  resetEffectLevel();
+});
+
+effectsListRadio.addEventListener('click', function (evt) {
+  if (evt.target.name === 'effect' && evt.target.type === 'radio') {
+    onEffectsListRadioClick(evt.target.value);
+  }
+});
+
+var listPictures = getPictures();
+picturesListElement.appendChild(renderListPictures(listPictures));
+
 renderBigPicture(listPictures[0]);
 bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
 bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
-bigPictureElement.classList.remove('hidden');
