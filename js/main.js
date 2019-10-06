@@ -9,6 +9,9 @@ var MIN_COMMENTS_COUNT = 1;
 var MAX_COMMENTS_COUNT = 4;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
+var SCALE_STEP = 25;
+var MIN_SCALE = 25;
+var MAX_SCALE = 100;
 
 var COMMENTS = [
   'Всё отлично!',
@@ -30,8 +33,6 @@ var DESCRIPTIONS = [
 
 var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 
-var EFFECTS = ['chrome', 'sepia', 'marvin', 'phobos', 'heat'];
-
 var uploadFileInput = document.querySelector('.img-upload__start input[id=upload-file]');
 var imgUploadElement = document.querySelector('.img-upload__overlay');
 var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
@@ -49,6 +50,7 @@ var picturesListElement = document.querySelector('.pictures');
 var bigPictureElement = document.querySelector('.big-picture');
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var effectsClassName = 'effects__preview--';
+var currentEffect = '';
 
 var getRandomElementFromArray = function (array) {
   return array[Math.round(Math.random() * (array.length - 1))];
@@ -136,21 +138,21 @@ var renderBigPicture = function (picture) {
 };
 
 var scalePreviewSmaller = function () {
-  var currentValue = Number(scaleControlInput.value.replace('%', '')) - 25;
-  if (currentValue < 25) {
-    currentValue = 25;
+  var currentValue = Number(scaleControlInput.value.replace('%', '')) - SCALE_STEP;
+  if (currentValue < MIN_SCALE) {
+    currentValue = MIN_SCALE;
   }
   scaleControlInput.value = currentValue + '%';
-  imgUploadPreviewElement.style.transform = 'scale(' + currentValue / 100 + ')';
+  imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
 };
 
 var scalePreviewBigger = function () {
-  var currentValue = Number(scaleControlInput.value.replace('%', '')) + 25;
-  if (currentValue > 100) {
-    currentValue = 100;
+  var currentValue = Number(scaleControlInput.value.replace('%', '')) + SCALE_STEP;
+  if (currentValue > MAX_SCALE) {
+    currentValue = MAX_SCALE;
   }
   scaleControlInput.value = currentValue + '%';
-  imgUploadPreviewElement.style.transform = 'scale(' + currentValue / 100 + ')';
+  imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
 };
 
 var onClickPreviewSmaller = function () {
@@ -185,11 +187,9 @@ var updateEffectLevel = function () {
 };
 
 var checkHashtagsValidity = function () {
-  var hashtagsString = hashtagsElement.value;
+  var hashtagsString = hashtagsElement.value.trim().replace(/\s\s+/g, ' ');
 
-  while (hashtagsString.indexOf('  ') !== -1) {
-    hashtagsString = hashtagsString.replace('  ', ' ');
-  }
+  hashtagsElement.setCustomValidity('');
 
   if (hashtagsString === '' || hashtagsString.length === 1) {
     return;
@@ -200,6 +200,10 @@ var checkHashtagsValidity = function () {
   if (hashtags.length > 5) {
     hashtagsElement.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
     return;
+  }
+
+  for (var j = 0; j < hashtags.length; j++) {
+    hashtags[j] = hashtags[j].toLowerCase();
   }
 
   for (var i = 0; i < hashtags.length; i++) {
@@ -218,16 +222,20 @@ var checkHashtagsValidity = function () {
       return;
     }
 
-    for (var j = 0; j < hashtags.length; j++) {
-      if (i !== j && hashtags[i].toLowerCase() === hashtags[j].toLowerCase()) {
+    if (hashtags[i].indexOf('#', 1) !== -1) {
+      hashtagsElement.setCustomValidity('Хеш-тег не может содержать более одной решётки: ' + hashtags[i]);
+      return;
+    }
+
+    hashtags.findIndex(function (elem, index) {
+      if (elem === hashtags[i] && i !== index) {
         hashtagsElement.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды: ' + hashtags[i]);
         return;
       }
-    }
+    });
   }
-
-  hashtagsElement.setCustomValidity('');
 };
+
 
 var onClickCloseImgUpload = function () {
   closeImgUpload();
@@ -245,20 +253,16 @@ var resetEffectLevel = function () {
   effectValueElement.value = '100';
 };
 
-var onEffectsListRadioClick = function (currentEffect) {
+var onEffectsListRadioClick = function (newEffect) {
   resetEffectLevel();
-  for (var i = 0; i < EFFECTS.length; i++) {
-    if (imgUploadPreviewElement.classList.contains(effectsClassName + EFFECTS[i])) {
-      imgUploadPreviewElement.classList.remove(effectsClassName + EFFECTS[i]);
-    }
-  }
-
-  if (currentEffect === 'none') {
+  imgUploadPreviewElement.classList.remove(effectsClassName + currentEffect);
+  if (newEffect === 'none') {
     imgUploadEffectLevelElement.classList.add('hidden');
   } else {
     imgUploadEffectLevelElement.classList.remove('hidden');
-    imgUploadPreviewElement.classList.add(effectsClassName + currentEffect);
+    imgUploadPreviewElement.classList.add(effectsClassName + newEffect);
   }
+  currentEffect = newEffect;
 };
 
 var resetScalePreview = function () {
@@ -288,7 +292,7 @@ uploadFileInput.addEventListener('change', function () {
   resetEffectLevel();
 });
 
-effectsListRadio.addEventListener('click', function (evt) {
+effectsListRadio.addEventListener('change', function (evt) {
   if (evt.target.name === 'effect' && evt.target.type === 'radio') {
     onEffectsListRadioClick(evt.target.value);
   }
