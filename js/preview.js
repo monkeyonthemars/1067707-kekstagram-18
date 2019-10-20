@@ -24,7 +24,7 @@
   };
 
   window.preview = {
-    renderBigPicture: function (picture) {
+    render: function (picture) {
       var listComments = getCommentsMarkup(picture);
       var commentsListElement = bigPictureElement.querySelector('.social__comments');
       bigPictureElement.querySelector('.big-picture__img img').src = picture.url;
