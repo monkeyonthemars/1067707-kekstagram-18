@@ -25,11 +25,11 @@
 
       picturesListElement.appendChild(renderListPictures(data));
 
-      window.preview.renderBigPicture(data[0]);
+      window.preview.render(data[0]);
       bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
       bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
 
-      uploadFileInput.addEventListener('change', window.form.openImgUpload);
+      uploadFileInput.addEventListener('change', window.form.open);
     }
   };
 

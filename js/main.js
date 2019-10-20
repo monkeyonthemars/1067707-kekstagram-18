@@ -3,22 +3,22 @@
 var filterPopularElement = document.getElementById('filter-popular');
 var filterRandomElement = document.getElementById('filter-random');
 var filterDiscussedElement = document.getElementById('filter-discussed');
-var Pictures = {};
+var pictures = [];
 
 filterPopularElement.addEventListener('click', function () {
-  window.filter.onPopularClick(Pictures);
+  window.filter.onPopularClick(pictures);
 });
 
 filterRandomElement.addEventListener('click', function () {
-  window.filter.onRandomClick(Pictures);
+  window.filter.onRandomClick(pictures);
 });
 
 filterDiscussedElement.addEventListener('click', function () {
-  window.filter.onDiscussedClick(Pictures);
+  window.filter.onDiscussedClick(pictures);
 });
 
 var onLoad = function (data) {
-  Pictures = data.slice();
+  pictures = data.slice();
   window.gallery.update(data);
   document.querySelector('.img-filters').classList.remove('img-filters--inactive');
 };

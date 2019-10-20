@@ -173,7 +173,7 @@
   });
 
   window.form = {
-    openImgUpload: function () {
+    open: function () {
       imgUploadCancelButton.addEventListener('click', onClickCloseImgUpload);
       scaleSmallerElement.addEventListener('click', onClickPreviewSmaller);
       scaleBiggerElement.addEventListener('click', onClickPreviewBigger);
