@@ -2,11 +2,13 @@
 
 (function () {
 
-  var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
   var SCALE_STEP = 25;
   var MIN_SCALE = 25;
   var MAX_SCALE = 100;
+  var KeyCode = {
+    ENTER: 13,
+    ESC: 27
+  };
 
   var uploadFileInput = document.querySelector('.img-upload__start input[id=upload-file]');
   var imgUploadElement = document.querySelector('.img-upload__overlay');
@@ -62,7 +64,7 @@
   };
 
   var onImgUploadCancelEnterPress = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE && evt.target === imgUploadCancelButton) {
+    if (evt.keyCode === KeyCode.ENTER && evt.target === imgUploadCancelButton) {
       closeImgUpload();
     }
   };
@@ -123,13 +125,12 @@
     }
   };
 
-
   var onClickCloseImgUpload = function () {
     closeImgUpload();
   };
 
   var onImgUploadEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
+    if (evt.keyCode === KeyCode.ESC) {
       closeImgUpload();
     }
   };
