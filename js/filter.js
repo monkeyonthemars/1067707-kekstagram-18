@@ -3,9 +3,22 @@
 (function () {
 
   var RANDOM_PICTURES_COUNT = 10;
+  var filterPopularElement = document.querySelector('#filter-popular');
+  var filterRandomElement = document.querySelector('#filter-random');
+  var filterDiscussedElement = document.querySelector('#filter-discussed');
+
+
+  var changeActiveButton = function (element) {
+    filterPopularElement.classList.remove('img-filters__button--active');
+    filterRandomElement.classList.remove('img-filters__button--active');
+    filterDiscussedElement.classList.remove('img-filters__button--active');
+
+    element.classList.add('img-filters__button--active');
+  };
 
   window.filter = {
     onPopularClick: window.debounce(function (pictures) {
+      changeActiveButton(filterPopularElement);
       window.gallery.update(pictures);
     }),
 
@@ -20,6 +33,7 @@
         sourcePictures.splice(randomIndex, 1);
       }
 
+      changeActiveButton(filterRandomElement);
       window.gallery.update(randomPictures);
     }),
 
@@ -36,7 +50,9 @@
         }
       }
 
+      changeActiveButton(filterDiscussedElement);
       window.gallery.update(discussedPictures);
     })
   };
+
 })();

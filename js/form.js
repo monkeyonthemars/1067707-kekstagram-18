@@ -14,6 +14,7 @@
   var imgUploadElement = document.querySelector('.img-upload__overlay');
   var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
   var hashtagsElement = document.querySelector('.text__hashtags');
+  var descriptionElement = document.querySelector('.text__description');
   var scaleSmallerElement = document.querySelector('.scale__control--smaller');
   var scaleBiggerElement = document.querySelector('.scale__control--bigger');
   var scaleControlInput = document.querySelector('.scale__control--value');
@@ -163,6 +164,14 @@
   });
 
   hashtagsElement.addEventListener('blur', function () {
+    document.addEventListener('keydown', onImgUploadEscPress);
+  });
+
+  descriptionElement.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onImgUploadEscPress);
+  });
+
+  descriptionElement.addEventListener('blur', function () {
     document.addEventListener('keydown', onImgUploadEscPress);
   });
 
