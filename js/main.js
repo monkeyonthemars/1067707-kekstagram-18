@@ -3,7 +3,37 @@
 var filterPopularElement = document.getElementById('filter-popular');
 var filterRandomElement = document.getElementById('filter-random');
 var filterDiscussedElement = document.getElementById('filter-discussed');
+var picturesListElement = document.querySelector('.pictures');
 var pictures = [];
+
+var searchParentElement = function (element, clss) {
+  if (element.parentElement === null) {
+    return null;
+  }
+  if (element.classList.contains(clss)) {
+    return element;
+  }
+  return searchParentElement(element.parentElement, clss);
+};
+
+var openBigPicture = function (evt) {
+  var parentElement = searchParentElement(evt.target, 'picture');
+  if (parentElement !== null) {
+    var clickedPictureSrc = parentElement.querySelector('.picture__img').attributes['src'].value;
+
+    window.preview.render(
+        pictures.find(function (element) {
+          if (element.url !== clickedPictureSrc) {
+            return false;
+          }
+          return true;
+        }));
+  }
+};
+
+var onPictureClick = function (evt) {
+  openBigPicture(evt);
+};
 
 filterPopularElement.addEventListener('click', function () {
   window.filter.onPopularClick(pictures);
@@ -16,6 +46,8 @@ filterRandomElement.addEventListener('click', function () {
 filterDiscussedElement.addEventListener('click', function () {
   window.filter.onDiscussedClick(pictures);
 });
+
+picturesListElement.addEventListener('click', onPictureClick);
 
 var onLoad = function (data) {
   pictures = data.slice();

@@ -25,7 +25,6 @@
 
       picturesListElement.appendChild(renderListPictures(data));
 
-      window.preview.render(data[0]);
       bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
       bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
 
