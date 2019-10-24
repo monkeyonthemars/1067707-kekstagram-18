@@ -6,18 +6,18 @@ var filterDiscussedElement = document.getElementById('filter-discussed');
 var picturesListElement = document.querySelector('.pictures');
 var pictures = [];
 
-var searchParentElement = function (element, clss) {
-  if (element.parentElement === null) {
-    return null;
-  }
+var searchParentElementWithClassname = function (element, clss) {
   if (element.classList.contains(clss)) {
     return element;
   }
-  return searchParentElement(element.parentElement, clss);
+  if (element.parentElement === null) {
+    return null;
+  }
+  return searchParentElementWithClassname(element.parentElement, clss);
 };
 
 var openBigPicture = function (evt) {
-  var parentElement = searchParentElement(evt.target, 'picture');
+  var parentElement = searchParentElementWithClassname(evt.target, 'picture');
   if (parentElement !== null) {
     var clickedPictureSrc = parentElement.querySelector('.picture__img').attributes['src'].value;
 

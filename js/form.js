@@ -18,13 +18,13 @@
   var scaleSmallerElement = document.querySelector('.scale__control--smaller');
   var scaleBiggerElement = document.querySelector('.scale__control--bigger');
   var scaleControlInput = document.querySelector('.scale__control--value');
-  var effectValueElement = document.querySelector('.effect-level__value');
+  var effectLevelValueElement = document.querySelector('.effect-level__value');
   var effectLevelPinElement = document.querySelector('.effect-level__pin');
+  var effectLevelLineElement = document.querySelector('.effect-level__line');
   var effectLevelDepthElement = document.querySelector('.effect-level__depth');
   var effectsListRadio = document.querySelector('.effects__list');
   var imgUploadPreviewElement = document.querySelector('.img-upload__preview img');
   var imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
-  var effectsClassName = 'effects__preview--';
   var currentEffect = '';
 
   var scalePreviewSmaller = function () {
@@ -61,6 +61,7 @@
     imgUploadCancelButton.removeEventListener('keydown', onImgUploadCancelEnterPress);
     effectLevelPinElement.removeEventListener('mouseup', updateEffectLevel);
     hashtagsElement.removeEventListener('input', checkHashtagsValidity);
+    effectLevelPinElement.removeEventListener('mousedown', onMouseDown);
     uploadFileInput.value = '';
   };
 
@@ -73,7 +74,7 @@
   var updateEffectLevel = function () {
     effectLevelPinElement.style.left = effectLevelPinElement.style.left;
     effectLevelDepthElement.style.width = effectLevelPinElement.style.left;
-    effectValueElement.value = effectLevelPinElement.style.left.replace('%', '');
+    effectLevelValueElement.value = effectLevelPinElement.style.left.replace('%', '');
   };
 
   var checkHashtagsValidity = function () {
@@ -139,19 +140,117 @@
   var resetEffectLevel = function () {
     effectLevelPinElement.style.left = '100%';
     effectLevelDepthElement.style.width = '100%';
-    effectValueElement.value = '100';
+    effectLevelValueElement.value = '100';
+    imgUploadPreviewElement.style.filter = '';
+    imgUploadPreviewElement.style.WebkitFilter = '';
+  };
+
+  var changeEffect = function (ratio) {
+    if (currentEffect === 'none') {
+      return;
+    }
+    if (ratio === undefined) {
+      ratio = 1;
+    }
+    var effect = {
+      chrome: {
+        max: 1,
+        min: 0,
+        filter: 'grayscale',
+        suffix: ''
+      },
+      sepia: {
+        max: 1,
+        min: 0,
+        filter: 'sepia',
+        suffix: ''
+      },
+      marvin: {
+        max: 100,
+        min: 0,
+        filter: 'invert',
+        suffix: '%'
+      },
+      phobos: {
+        max: 5,
+        min: 0,
+        filter: 'blur',
+        suffix: 'px'
+      },
+      heat: {
+        max: 3,
+        min: 1,
+        filter: 'brightness',
+        suffix: ''
+      }
+    };
+    var effectProperties = effect[currentEffect];
+    var effectValue = effectProperties.max * ratio;
+    if (effectValue < effectProperties.min) {
+      effectValue = effectProperties.min;
+    }
+    var filter = effectProperties.filter + '(' + effectValue + effectProperties.suffix + ')';
+
+    imgUploadPreviewElement.style.filter = filter;
+    imgUploadPreviewElement.style.WebkitFilter = filter;
   };
 
   var onEffectsListRadioClick = function (newEffect) {
     resetEffectLevel();
-    imgUploadPreviewElement.classList.remove(effectsClassName + currentEffect);
     if (newEffect === 'none') {
       imgUploadEffectLevelElement.classList.add('hidden');
     } else {
       imgUploadEffectLevelElement.classList.remove('hidden');
-      imgUploadPreviewElement.classList.add(effectsClassName + newEffect);
     }
     currentEffect = newEffect;
+    changeEffect();
+  };
+
+  var onMouseDown = function (evt) {
+    evt.preventDefault();
+
+    var lineWidth = effectLevelLineElement.getBoundingClientRect().width;
+    var startCoordX = evt.clientX;
+    var dragged = false;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shiftCoordX = startCoordX - moveEvt.clientX;
+      var newCoordX = effectLevelPinElement.offsetLeft - shiftCoordX;
+      dragged = true;
+      startCoordX = moveEvt.clientX;
+      if (newCoordX < 0) {
+        newCoordX = 0;
+      }
+      if (newCoordX > lineWidth) {
+        newCoordX = lineWidth;
+      }
+      var newInputValue = Math.round(100 * newCoordX / lineWidth);
+      effectLevelPinElement.style.left = newCoordX + 'px';
+      effectLevelDepthElement.style.width = newCoordX + 'px';
+      effectLevelValueElement.value = newInputValue;
+      changeEffect(newCoordX / lineWidth);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      if (dragged) {
+        var onClickPreventDefault = function (defaultEvt) {
+          defaultEvt.preventDefault();
+          effectLevelPinElement.removeEventListener('click', onClickPreventDefault);
+        };
+        effectLevelPinElement.addEventListener('click', onClickPreventDefault);
+      }
+
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
 
   var resetScalePreview = function () {
@@ -190,6 +289,7 @@
       imgUploadCancelButton.addEventListener('keydown', onImgUploadCancelEnterPress);
       effectLevelPinElement.addEventListener('mouseup', updateEffectLevel);
       hashtagsElement.addEventListener('input', checkHashtagsValidity);
+      effectLevelPinElement.addEventListener('mousedown', onMouseDown);
       imgUploadElement.classList.remove('hidden');
       imgUploadEffectLevelElement.classList.add('hidden');
       resetScalePreview();

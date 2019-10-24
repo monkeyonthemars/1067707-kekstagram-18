@@ -6,14 +6,14 @@
   var filterPopularElement = document.querySelector('#filter-popular');
   var filterRandomElement = document.querySelector('#filter-random');
   var filterDiscussedElement = document.querySelector('#filter-discussed');
-
+  var classnameImgFilterActive = 'img-filters__button--active';
 
   var changeActiveButton = function (element) {
-    filterPopularElement.classList.remove('img-filters__button--active');
-    filterRandomElement.classList.remove('img-filters__button--active');
-    filterDiscussedElement.classList.remove('img-filters__button--active');
+    filterPopularElement.classList.remove(classnameImgFilterActive);
+    filterRandomElement.classList.remove(classnameImgFilterActive);
+    filterDiscussedElement.classList.remove(classnameImgFilterActive);
 
-    element.classList.add('img-filters__button--active');
+    element.classList.add(classnameImgFilterActive);
   };
 
   window.filter = {
