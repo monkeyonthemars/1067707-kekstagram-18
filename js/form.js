@@ -20,11 +20,12 @@
   var scaleControlInput = document.querySelector('.scale__control--value');
   var effectLevelValueElement = document.querySelector('.effect-level__value');
   var effectLevelPinElement = document.querySelector('.effect-level__pin');
-  var effectLevelLineElement = document.querySelector('.effect-level__line');
   var effectLevelDepthElement = document.querySelector('.effect-level__depth');
   var effectsListRadio = document.querySelector('.effects__list');
   var imgUploadPreviewElement = document.querySelector('.img-upload__preview img');
   var imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
+  var lineWidth = 0;
+
   var currentEffect = '';
 
   var scalePreviewSmaller = function () {
@@ -149,9 +150,6 @@
     if (currentEffect === 'none') {
       return;
     }
-    if (ratio === undefined) {
-      ratio = 1;
-    }
     var effect = {
       chrome: {
         max: 1,
@@ -185,7 +183,7 @@
       }
     };
     var effectProperties = effect[currentEffect];
-    var effectValue = effectProperties.max * ratio;
+    var effectValue = ratio !== undefined ? effectProperties.max * ratio : effectProperties.max;
     if (effectValue < effectProperties.min) {
       effectValue = effectProperties.min;
     }
@@ -193,6 +191,8 @@
 
     imgUploadPreviewElement.style.filter = filter;
     imgUploadPreviewElement.style.WebkitFilter = filter;
+
+    lineWidth = document.querySelector('.effect-level__line').clientWidth;
   };
 
   var onEffectsListRadioClick = function (newEffect) {
@@ -209,7 +209,6 @@
   var onMouseDown = function (evt) {
     evt.preventDefault();
 
-    var lineWidth = effectLevelLineElement.getBoundingClientRect().width;
     var startCoordX = evt.clientX;
     var dragged = false;
 
