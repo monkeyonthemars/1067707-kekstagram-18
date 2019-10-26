@@ -191,8 +191,6 @@
 
     imgUploadPreviewElement.style.filter = filter;
     imgUploadPreviewElement.style.WebkitFilter = filter;
-
-    lineWidth = document.querySelector('.effect-level__line').clientWidth;
   };
 
   var onEffectsListRadioClick = function (newEffect) {
@@ -204,6 +202,8 @@
     }
     currentEffect = newEffect;
     changeEffect();
+
+    lineWidth = document.querySelector('.effect-level__line').clientWidth;
   };
 
   var onMouseDown = function (evt) {
