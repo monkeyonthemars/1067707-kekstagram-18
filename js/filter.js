@@ -3,17 +3,17 @@
 (function () {
 
   var RANDOM_PICTURES_COUNT = 10;
+  var CLASS_NAME_IMG_FILTER_ACTIVE = 'img-filters__button--active';
   var filterPopularElement = document.querySelector('#filter-popular');
   var filterRandomElement = document.querySelector('#filter-random');
   var filterDiscussedElement = document.querySelector('#filter-discussed');
 
-
   var changeActiveButton = function (element) {
-    filterPopularElement.classList.remove('img-filters__button--active');
-    filterRandomElement.classList.remove('img-filters__button--active');
-    filterDiscussedElement.classList.remove('img-filters__button--active');
+    filterPopularElement.classList.remove(CLASS_NAME_IMG_FILTER_ACTIVE);
+    filterRandomElement.classList.remove(CLASS_NAME_IMG_FILTER_ACTIVE);
+    filterDiscussedElement.classList.remove(CLASS_NAME_IMG_FILTER_ACTIVE);
 
-    element.classList.add('img-filters__button--active');
+    element.classList.add(CLASS_NAME_IMG_FILTER_ACTIVE);
   };
 
   window.filter = {
