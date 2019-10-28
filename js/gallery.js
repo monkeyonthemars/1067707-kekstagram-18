@@ -16,7 +16,7 @@
     update: function (data) {
       var picturesListElement = document.querySelector('.pictures');
       var bigPictureElement = document.querySelector('.big-picture');
-      var uploadFileInput = document.querySelector('.img-upload__start input[id=upload-file]');
+      var inputImgPath = document.querySelector('.img-upload__input');
       var delPictures = document.querySelectorAll('.picture');
 
       for (var i = 0; i < delPictures.length; i++) {
@@ -28,7 +28,7 @@
       bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
       bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
 
-      uploadFileInput.addEventListener('change', window.form.open);
+      inputImgPath.addEventListener('change', window.form.open);
     }
   };
 
