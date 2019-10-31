@@ -12,7 +12,6 @@
 
   var imgUploadElement = document.querySelector('.img-upload__overlay');
   var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
-  var descriptionElement = document.querySelector('.text__description');
   var scaleSmallerElement = document.querySelector('.scale__control--smaller');
   var scaleBiggerElement = document.querySelector('.scale__control--bigger');
   var effectLevelPinElement = document.querySelector('.effect-level__pin');
@@ -22,39 +21,31 @@
   var imgUploadPreviewElement = document.querySelector('.img-upload__preview img');
   var imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
 
-  var mainElement = document.querySelector('main');
   var imgUploadLabel = document.querySelector('.img-upload__label');
-  var inputScaleValue = document.querySelector('.scale__control--value');
-  var inputEffectLevelValue = document.querySelector('.effect-level__value');
-  var inputEffect = imgUploadForm.querySelector('.effects__radio');
-  var inputHastags = document.querySelector('.text__hashtags');
-  var textDescription = document.querySelector('.text__description');
+  var scaleControlInput = document.querySelector('.scale__control--value');
+  var effectLevelValueElement = document.querySelector('.effect-level__value');
+  var effectElement = imgUploadForm.querySelector('.effects__radio');
+  var hashtagsElement = document.querySelector('.text__hashtags');
+  var descriptionElement = document.querySelector('.text__description');
   var currentEffect = '';
-
-  var successTemplate = document.querySelector('#success').content.querySelector('.success');
-  var successElement = successTemplate.cloneNode(true);
-  var successButtonElement = successElement.querySelector('.success__button');
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-  var errorElement = errorTemplate.cloneNode(true);
-  var errorButtonElements = errorElement.querySelectorAll('.error__button');
 
   var lineWidth = 0;
 
   var scalePreviewSmaller = function () {
-    var currentValue = Number(inputScaleValue.value.replace('%', '')) - SCALE_STEP;
+    var currentValue = Number(scaleControlInput.value.replace('%', '')) - SCALE_STEP;
     if (currentValue < MIN_SCALE) {
       currentValue = MIN_SCALE;
     }
-    inputScaleValue.value = currentValue + '%';
+    scaleControlInput.value = currentValue + '%';
     imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
   };
 
   var scalePreviewBigger = function () {
-    var currentValue = Number(inputScaleValue.value.replace('%', '')) + SCALE_STEP;
+    var currentValue = Number(scaleControlInput.value.replace('%', '')) + SCALE_STEP;
     if (currentValue > MAX_SCALE) {
       currentValue = MAX_SCALE;
     }
-    inputScaleValue.value = currentValue + '%';
+    scaleControlInput.value = currentValue + '%';
     imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
   };
 
@@ -73,7 +64,7 @@
     scaleBiggerElement.removeEventListener('click', onClickPreviewBigger);
     imgUploadCancelButton.removeEventListener('keydown', onImgUploadCancelEnterPress);
     effectLevelPinElement.removeEventListener('mouseup', updateEffectLevel);
-    inputHastags.removeEventListener('input', checkHashtagsValidity);
+    hashtagsElement.removeEventListener('input', checkHashtagsValidity);
     effectLevelPinElement.removeEventListener('mousedown', onMouseDown);
 
     imgUploadForm.reset();
@@ -88,13 +79,13 @@
   var updateEffectLevel = function () {
     effectLevelPinElement.style.left = effectLevelPinElement.style.left;
     effectLevelDepthElement.style.width = effectLevelPinElement.style.left;
-    inputEffectLevelValue.value = effectLevelPinElement.style.left.replace('%', '');
+    effectLevelValueElement.value = effectLevelPinElement.style.left.replace('%', '');
   };
 
   var checkHashtagsValidity = function () {
-    var hashtagsString = inputHastags.value.trim().replace(/\s\s+/g, ' ');
+    var hashtagsString = hashtagsElement.value.trim().replace(/\s\s+/g, ' ');
 
-    inputHastags.setCustomValidity('');
+    hashtagsElement.setCustomValidity('');
 
     if (hashtagsString === '' || hashtagsString.length === 1) {
       return;
@@ -103,7 +94,7 @@
     var hashtags = hashtagsString.split(' ');
 
     if (hashtags.length > 5) {
-      inputHastags.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+      hashtagsElement.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
       return;
     }
 
@@ -113,28 +104,28 @@
 
     for (var i = 0; i < hashtags.length; i++) {
       if (hashtags[i][0] !== '#') {
-        inputHastags.setCustomValidity('Хэш-тег начинается с символа # (решётка): ' + hashtags[i]);
+        hashtagsElement.setCustomValidity('Хэш-тег начинается с символа # (решётка): ' + hashtags[i]);
         return;
       }
 
       if (hashtags[i].length === 1) {
-        inputHastags.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
+        hashtagsElement.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
         return;
       }
 
       if (hashtags[i].length > 20) {
-        inputHastags.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку: ' + hashtags[i]);
+        hashtagsElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку: ' + hashtags[i]);
         return;
       }
 
       if (hashtags[i].indexOf('#', 1) !== -1) {
-        inputHastags.setCustomValidity('Хеш-тег не может содержать более одной решётки: ' + hashtags[i]);
+        hashtagsElement.setCustomValidity('Хеш-тег не может содержать более одной решётки: ' + hashtags[i]);
         return;
       }
 
       hashtags.findIndex(function (elem, index) {
         if (elem === hashtags[i] && i !== index) {
-          inputHastags.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды: ' + hashtags[i]);
+          hashtagsElement.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды: ' + hashtags[i]);
           return;
         }
       });
@@ -256,7 +247,7 @@
           effectLevelPinElement.removeEventListener('click', onClickPreventDefault);
         };
         effectLevelPinElement.addEventListener('click', onClickPreventDefault);
-        inputEffectLevelValue.value = newInputValue;
+        effectLevelValueElement.value = newInputValue;
       }
 
     };
@@ -265,11 +256,11 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  inputHastags.addEventListener('focus', function () {
+  hashtagsElement.addEventListener('focus', function () {
     document.removeEventListener('keydown', onImgUploadEscPress);
   });
 
-  inputHastags.addEventListener('blur', function () {
+  hashtagsElement.addEventListener('blur', function () {
     document.addEventListener('keydown', onImgUploadEscPress);
   });
 
@@ -287,72 +278,30 @@
     }
   });
 
-  var messageClose = function () {
-    document.removeEventListener('keydown', onMessageEscPress);
-    if (document.querySelector('.success') !== null) {
-      successElement.removeEventListener('click', onClickMessageBackground);
-      mainElement.removeChild(document.querySelector('.success'));
-      successButtonElement.removeEventListener('click', onClickMessageCloseButton);
-    }
-    if (document.querySelector('.error') !== null) {
-      errorElement.removeEventListener('click', onClickMessageBackground);
-      mainElement.removeChild(document.querySelector('.error'));
-      for (var i = 0; i < errorButtonElements.length; i++) {
-        errorButtonElements[i].removeEventListener('click', onClickMessageCloseButton);
-      }
-    }
-  };
-
-  var onClickMessageCloseButton = function () {
-    messageClose();
-  };
-
-  var onMessageEscPress = function (evt) {
-    if (evt.keyCode === KeyCode.ESC) {
-      messageClose();
-    }
-  };
-
-  var onClickMessageBackground = function (evt) {
-    if (evt.target.classList.contains('success')
-    || evt.target.classList.contains('error')) {
-      messageClose();
-    }
-  };
-
   var resetForm = function () {
-    inputScaleValue.value = '100%';
-    inputEffectLevelValue.value = '100';
-    inputEffect.value = 'none';
+    scaleControlInput.value = '100%';
+    effectLevelValueElement.value = '100';
+    effectElement.value = 'none';
     currentEffect = 'none';
-    inputHastags.value = '';
-    textDescription.value = '';
+    hashtagsElement.value = '';
+    descriptionElement.value = '';
     imgUploadPreviewElement.style.transform = 'scale(1)';
   };
 
   var onLoad = function () {
     closeImgUpload();
-    mainElement.appendChild(successElement);
+    window.message.open('success');
     imgUploadLabel.classList.add('hidden');
-
-    successElement.addEventListener('click', onClickMessageBackground);
-    successButtonElement.addEventListener('click', onClickMessageCloseButton);
   };
 
   var onError = function () {
     closeImgUpload();
-    mainElement.appendChild(errorElement);
-
-    errorElement.addEventListener('click', onClickMessageBackground);
-    for (var i = 0; i < errorButtonElements.length; i++) {
-      errorButtonElements[i].addEventListener('click', onClickMessageCloseButton);
-    }
+    window.message.open('error');
   };
 
   imgUploadForm.addEventListener('submit', function (evt) {
-    inputEffect.value = currentEffect;
+    effectElement.value = currentEffect;
     window.backend.save(new FormData(imgUploadForm), onLoad, onError);
-    document.addEventListener('keydown', onMessageEscPress);
     evt.preventDefault();
   });
 
@@ -368,7 +317,7 @@
       effectLevelPinElement.addEventListener('mouseup', updateEffectLevel);
       effectLevelPinElement.addEventListener('mousedown', onMouseDown);
 
-      inputHastags.addEventListener('input', checkHashtagsValidity);
+      hashtagsElement.addEventListener('input', checkHashtagsValidity);
 
       imgUploadElement.classList.remove('hidden');
       imgUploadEffectLevelElement.classList.add('hidden');

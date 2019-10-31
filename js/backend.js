@@ -2,8 +2,9 @@
 
 (function () {
 
+  var TIMEOUT = 10000;
+
   var getXMLHttpRequest = function (URL, method, onLoad, onError, data) {
-    var TIMEOUT = 10000;
     var StatusCode = {
       OK: 200
     };
@@ -47,7 +48,7 @@
     },
     save: function (data, onLoad, onError) {
 
-      getXMLHttpRequest('https://js.dump.academy/kekstagram', 'POST', onLoad, onError, data);
+      getXMLHttpRequest('https://js.dump.academy/kekstagrams', 'POST', onLoad, onError, data);
 
     },
   };
