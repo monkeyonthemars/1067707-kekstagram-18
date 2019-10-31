@@ -48,7 +48,7 @@
     },
     save: function (data, onLoad, onError) {
 
-      getXMLHttpRequest('https://js.dump.academy/kekstagrams', 'POST', onLoad, onError, data);
+      getXMLHttpRequest('https://js.dump.academy/kekstagram', 'POST', onLoad, onError, data);
 
     },
   };
