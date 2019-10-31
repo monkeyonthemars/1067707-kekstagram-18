@@ -10,23 +10,26 @@
     ESC: 27
   };
 
-  var uploadFileInput = document.querySelector('.img-upload__start input[id=upload-file]');
   var imgUploadElement = document.querySelector('.img-upload__overlay');
   var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
-  var hashtagsElement = document.querySelector('.text__hashtags');
-  var descriptionElement = document.querySelector('.text__description');
   var scaleSmallerElement = document.querySelector('.scale__control--smaller');
   var scaleBiggerElement = document.querySelector('.scale__control--bigger');
-  var scaleControlInput = document.querySelector('.scale__control--value');
-  var effectLevelValueElement = document.querySelector('.effect-level__value');
   var effectLevelPinElement = document.querySelector('.effect-level__pin');
   var effectLevelDepthElement = document.querySelector('.effect-level__depth');
   var effectsListRadio = document.querySelector('.effects__list');
+  var imgUploadForm = document.querySelector('.img-upload__form');
   var imgUploadPreviewElement = document.querySelector('.img-upload__preview img');
   var imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
-  var lineWidth = 0;
 
+  var imgUploadLabel = document.querySelector('.img-upload__label');
+  var scaleControlInput = document.querySelector('.scale__control--value');
+  var effectLevelValueElement = document.querySelector('.effect-level__value');
+  var effectElement = imgUploadForm.querySelector('.effects__radio');
+  var hashtagsElement = document.querySelector('.text__hashtags');
+  var descriptionElement = document.querySelector('.text__description');
   var currentEffect = '';
+
+  var lineWidth = 0;
 
   var scalePreviewSmaller = function () {
     var currentValue = Number(scaleControlInput.value.replace('%', '')) - SCALE_STEP;
@@ -63,7 +66,8 @@
     effectLevelPinElement.removeEventListener('mouseup', updateEffectLevel);
     hashtagsElement.removeEventListener('input', checkHashtagsValidity);
     effectLevelPinElement.removeEventListener('mousedown', onMouseDown);
-    uploadFileInput.value = '';
+
+    imgUploadForm.reset();
   };
 
   var onImgUploadCancelEnterPress = function (evt) {
@@ -138,15 +142,7 @@
     }
   };
 
-  var resetEffectLevel = function () {
-    effectLevelPinElement.style.left = '100%';
-    effectLevelDepthElement.style.width = '100%';
-    effectLevelValueElement.value = '100';
-    imgUploadPreviewElement.style.filter = '';
-    imgUploadPreviewElement.style.WebkitFilter = '';
-  };
-
-  var changeEffect = function (ratio) {
+  var changeEffectValue = function (ratio) {
     if (currentEffect === 'none') {
       return;
     }
@@ -193,6 +189,13 @@
     imgUploadPreviewElement.style.WebkitFilter = filter;
   };
 
+  var resetEffectLevel = function () {
+    effectLevelPinElement.style.left = '100%';
+    effectLevelDepthElement.style.width = '100%';
+    imgUploadPreviewElement.style.filter = '';
+    imgUploadPreviewElement.style.WebkitFilter = '';
+  };
+
   var onEffectsListRadioClick = function (newEffect) {
     resetEffectLevel();
     if (newEffect === 'none') {
@@ -201,7 +204,7 @@
       imgUploadEffectLevelElement.classList.remove('hidden');
     }
     currentEffect = newEffect;
-    changeEffect();
+    changeEffectValue();
 
     lineWidth = document.querySelector('.effect-level__line').clientWidth;
   };
@@ -211,6 +214,7 @@
 
     var startCoordX = evt.clientX;
     var dragged = false;
+    var newInputValue;
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
@@ -225,11 +229,10 @@
       if (newCoordX > lineWidth) {
         newCoordX = lineWidth;
       }
-      var newInputValue = Math.round(100 * newCoordX / lineWidth);
+      newInputValue = Math.round(100 * newCoordX / lineWidth);
       effectLevelPinElement.style.left = newCoordX + 'px';
       effectLevelDepthElement.style.width = newCoordX + 'px';
-      effectLevelValueElement.value = newInputValue;
-      changeEffect(newCoordX / lineWidth);
+      changeEffectValue(newCoordX / lineWidth);
     };
 
     var onMouseUp = function (upEvt) {
@@ -244,17 +247,13 @@
           effectLevelPinElement.removeEventListener('click', onClickPreventDefault);
         };
         effectLevelPinElement.addEventListener('click', onClickPreventDefault);
+        effectLevelValueElement.value = newInputValue;
       }
 
     };
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  };
-
-  var resetScalePreview = function () {
-    scaleControlInput.value = '100%';
-    imgUploadPreviewElement.style.transform = 'scale(1)';
   };
 
   hashtagsElement.addEventListener('focus', function () {
@@ -279,20 +278,51 @@
     }
   });
 
+  var resetForm = function () {
+    scaleControlInput.value = '100%';
+    effectLevelValueElement.value = '100';
+    effectElement.value = 'none';
+    currentEffect = 'none';
+    hashtagsElement.value = '';
+    descriptionElement.value = '';
+    imgUploadPreviewElement.style.transform = 'scale(1)';
+  };
+
+  var onLoad = function () {
+    closeImgUpload();
+    window.message.open('success');
+    imgUploadLabel.classList.add('hidden');
+  };
+
+  var onError = function () {
+    closeImgUpload();
+    window.message.open('error');
+  };
+
+  imgUploadForm.addEventListener('submit', function (evt) {
+    effectElement.value = currentEffect;
+    window.backend.save(new FormData(imgUploadForm), onLoad, onError);
+    evt.preventDefault();
+  });
+
   window.form = {
     open: function () {
       imgUploadCancelButton.addEventListener('click', onClickCloseImgUpload);
+      imgUploadCancelButton.addEventListener('keydown', onImgUploadCancelEnterPress);
+      document.addEventListener('keydown', onImgUploadEscPress);
+
       scaleSmallerElement.addEventListener('click', onClickPreviewSmaller);
       scaleBiggerElement.addEventListener('click', onClickPreviewBigger);
-      document.addEventListener('click', onImgUploadEscPress);
-      imgUploadCancelButton.addEventListener('keydown', onImgUploadCancelEnterPress);
+
       effectLevelPinElement.addEventListener('mouseup', updateEffectLevel);
-      hashtagsElement.addEventListener('input', checkHashtagsValidity);
       effectLevelPinElement.addEventListener('mousedown', onMouseDown);
+
+      hashtagsElement.addEventListener('input', checkHashtagsValidity);
+
       imgUploadElement.classList.remove('hidden');
       imgUploadEffectLevelElement.classList.add('hidden');
-      resetScalePreview();
-      resetEffectLevel();
+
+      resetForm();
     }
   };
 
