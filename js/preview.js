@@ -2,12 +2,13 @@
 
 (function () {
 
+  var COMMENTS_COUNT_PER_ONE_TIME = 5;
   var bigPictureElement = document.querySelector('.big-picture');
   var bigPictureCancelElement = document.querySelector('.big-picture__cancel');
-  var currentPicture = '';
-  var currentCommentsCount = 0;
   var commentsListElement = bigPictureElement.querySelector('.social__comments');
   var сommentElementTemplate = bigPictureElement.querySelector('.social__comment').cloneNode(true);
+  var currentCommentsCount = 0;
+  var currentPicture = '';
 
   var KeyCode = {
     ENTER: 13,
@@ -40,7 +41,7 @@
     var fragment = document.createDocumentFragment();
     var commentsCount = currentPicture.comments.length;
 
-    currentCommentsCount = startPosition + 5;
+    currentCommentsCount = startPosition + COMMENTS_COUNT_PER_ONE_TIME;
 
     if (currentCommentsCount >= commentsCount) {
       currentCommentsCount = commentsCount;
