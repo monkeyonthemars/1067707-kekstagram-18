@@ -36,24 +36,23 @@
   var commentsLoaderElement = document.querySelector('.comments-loader');
   commentsLoaderElement.addEventListener('click', onClickButtonLoadComments);
 
-  var getCommentsMarkup = function (start) {
+  var getCommentsMarkup = function (startPosition) {
     var fragment = document.createDocumentFragment();
-    var end = start + 5;
     var commentsCount = currentPicture.comments.length;
 
-    if (end >= commentsCount) {
-      end = commentsCount;
+    currentCommentsCount = startPosition + 5;
+
+    if (currentCommentsCount >= commentsCount) {
+      currentCommentsCount = commentsCount;
       bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
     }
 
-    for (start; start < end; start++) {
-      fragment.appendChild(getCommentMarkup(currentPicture.comments[start]));
+    for (startPosition; startPosition < currentCommentsCount; startPosition++) {
+      fragment.appendChild(getCommentMarkup(currentPicture.comments[startPosition]));
     }
 
-    bigPictureElement.querySelector('.social__comment-count').textContent = '' + end + ' из '
+    bigPictureElement.querySelector('.social__comment-count').textContent = '' + currentCommentsCount + ' из '
       + commentsCount + ' комментариев';
-
-    currentCommentsCount += 5;
 
     return fragment;
   };
