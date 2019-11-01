@@ -15,7 +15,6 @@
   window.gallery = {
     update: function (data) {
       var picturesListElement = document.querySelector('.pictures');
-      var bigPictureElement = document.querySelector('.big-picture');
       var inputImgPath = document.querySelector('.img-upload__input');
       var delPictures = document.querySelectorAll('.picture');
 
@@ -24,10 +23,6 @@
       }
 
       picturesListElement.appendChild(renderListPictures(data));
-
-      bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
-      bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
-
       inputImgPath.addEventListener('change', window.form.open);
     }
   };
