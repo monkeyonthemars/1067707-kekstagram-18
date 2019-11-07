@@ -29,6 +29,8 @@
   var descriptionElement = document.querySelector('.text__description');
   var currentEffect = '';
 
+  var imgUploadInput = document.querySelector('.img-upload__input');
+
   var lineWidth = 0;
 
   var scalePreviewSmaller = function () {
@@ -307,6 +309,10 @@
 
   window.form = {
     open: function () {
+      if (imgUploadInput.files.length > 0) {
+        imgUploadPreviewElement.src = URL.createObjectURL(imgUploadInput.files[0]);
+      }
+
       imgUploadCancelButton.addEventListener('click', onClickCloseImgUpload);
       imgUploadCancelButton.addEventListener('keydown', onImgUploadCancelEnterPress);
       document.addEventListener('keydown', onImgUploadEscPress);
