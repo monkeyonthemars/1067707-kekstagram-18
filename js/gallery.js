@@ -5,9 +5,9 @@
   var renderListPictures = function (listPictures) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < listPictures.length; i++) {
-      fragment.appendChild(window.picture.renderPicture(listPictures[i]));
-    }
+    listPictures.forEach(function (el) {
+      fragment.appendChild(window.picture.renderPicture(el));
+    });
 
     return fragment;
   };
@@ -15,15 +15,15 @@
   window.gallery = {
     update: function (data) {
       var picturesListElement = document.querySelector('.pictures');
-      var inputImgPath = document.querySelector('.img-upload__input');
-      var delPictures = document.querySelectorAll('.picture');
+      var inputImgPathElement = document.querySelector('.img-upload__input');
+      var delPicturesElement = document.querySelectorAll('.picture');
 
-      for (var i = 0; i < delPictures.length; i++) {
-        delPictures[i].remove();
-      }
+      delPicturesElement.forEach(function (el) {
+        el.remove();
+      });
 
       picturesListElement.appendChild(renderListPictures(data));
-      inputImgPath.addEventListener('change', window.form.open);
+      inputImgPathElement.addEventListener('change', window.form.open);
     }
   };
 
