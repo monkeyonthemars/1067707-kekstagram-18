@@ -4,11 +4,11 @@
 
   var mainElement = document.querySelector('main');
 
-  var successTemplate = document.querySelector('#success').content.querySelector('.success');
-  var successElement = successTemplate.cloneNode(true);
+  var successTemplateElement = document.querySelector('#success').content.querySelector('.success');
+  var successElement = successTemplateElement.cloneNode(true);
   var successButtonElement = successElement.querySelector('.success__button');
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-  var errorElement = errorTemplate.cloneNode(true);
+  var errorTemplateElement = document.querySelector('#error').content.querySelector('.error');
+  var errorElement = errorTemplateElement.cloneNode(true);
   var errorButtonElements = errorElement.querySelectorAll('.error__button');
 
   var KeyCode = {
@@ -59,9 +59,9 @@
       if (typeMessage === 'error') {
         document.removeEventListener('keydown', onErrorMessageEscPress);
         successElement.removeEventListener('click', onClickErrorMessageBackground);
-        for (var i = 0; i < errorButtonElements.length; i++) {
-          errorButtonElements[i].removeEventListener('click', onClickErrorMessageCloseButton);
-        }
+        errorButtonElements.forEach(function (el) {
+          el.removeEventListener('click', onClickErrorMessageCloseButton);
+        });
         mainElement.removeChild(document.querySelector('.error'));
       }
     },
@@ -76,9 +76,9 @@
       if (typeMessage === 'error') {
         mainElement.appendChild(errorElement);
         errorElement.addEventListener('click', onClickErrorMessageBackground);
-        for (var i = 0; i < errorButtonElements.length; i++) {
-          errorButtonElements[i].addEventListener('click', onClickErrorMessageCloseButton);
-        }
+        errorButtonElements.forEach(function (el) {
+          el.addEventListener('click', onClickErrorMessageCloseButton);
+        });
         document.addEventListener('keydown', onErrorMessageEscPress);
       }
     }

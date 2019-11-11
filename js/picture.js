@@ -2,11 +2,11 @@
 
 (function () {
 
-  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+  var pictureTemplateElement = document.querySelector('#picture').content.querySelector('.picture');
 
   window.picture = {
     renderPicture: function (picture) {
-      var pictureElement = pictureTemplate.cloneNode(true);
+      var pictureElement = pictureTemplateElement.cloneNode(true);
 
       pictureElement.querySelector('.picture__img').src = picture.url;
       pictureElement.querySelector('.picture__likes').textContent = picture.likes;

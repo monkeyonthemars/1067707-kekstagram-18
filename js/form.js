@@ -9,43 +9,56 @@
     ENTER: 13,
     ESC: 27
   };
+  var HashtagsErrorText = {
+    MAX_COUNT: 'Нельзя указать больше пяти хэш-тегов',
+    FIRST_SHARP: 'Хэш-тег начинается с символа # (решётка): ',
+    SHARP_ONLY: 'Хеш-тег не может состоять только из одной решётки',
+    MAX_LENGTH: 'Максимальная длина одного хэш-тега 20 символов, включая решётку: ',
+    MORE_THAN_ONE_SHARP: 'Хеш-тег не может содержать более одной решётки: ',
+    DUBLICATE: 'Один и тот же хэш-тег не может быть использован дважды: '
+  };
+  var HashtagsLimitValue = {
+    MAX_COUNT: 5,
+    MAX_LENGTH: 20
+  };
 
   var imgUploadElement = document.querySelector('.img-upload__overlay');
-  var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
+  var imgUploadCancelButtonElement = document.querySelector('.img-upload__cancel');
   var scaleSmallerElement = document.querySelector('.scale__control--smaller');
   var scaleBiggerElement = document.querySelector('.scale__control--bigger');
   var effectLevelPinElement = document.querySelector('.effect-level__pin');
   var effectLevelDepthElement = document.querySelector('.effect-level__depth');
   var effectsListRadio = document.querySelector('.effects__list');
-  var imgUploadForm = document.querySelector('.img-upload__form');
+  var imgUploadFormElement = document.querySelector('.img-upload__form');
   var imgUploadPreviewElement = document.querySelector('.img-upload__preview img');
   var imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
 
-  var imgUploadLabel = document.querySelector('.img-upload__label');
-  var scaleControlInput = document.querySelector('.scale__control--value');
+  var imgUploadLabelElement = document.querySelector('.img-upload__label');
+  var scaleControlInputElement = document.querySelector('.scale__control--value');
   var effectLevelValueElement = document.querySelector('.effect-level__value');
-  var effectElement = imgUploadForm.querySelector('.effects__radio');
+  var effectElement = imgUploadFormElement.querySelector('.effects__radio');
   var hashtagsElement = document.querySelector('.text__hashtags');
   var descriptionElement = document.querySelector('.text__description');
   var currentEffect = '';
 
+  var imgUploadInput = document.querySelector('.img-upload__input');
   var lineWidth = 0;
 
   var scalePreviewSmaller = function () {
-    var currentValue = Number(scaleControlInput.value.replace('%', '')) - SCALE_STEP;
+    var currentValue = Number(scaleControlInputElement.value.replace('%', '')) - SCALE_STEP;
     if (currentValue < MIN_SCALE) {
       currentValue = MIN_SCALE;
     }
-    scaleControlInput.value = currentValue + '%';
+    scaleControlInputElement.value = currentValue + '%';
     imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
   };
 
   var scalePreviewBigger = function () {
-    var currentValue = Number(scaleControlInput.value.replace('%', '')) + SCALE_STEP;
+    var currentValue = Number(scaleControlInputElement.value.replace('%', '')) + SCALE_STEP;
     if (currentValue > MAX_SCALE) {
       currentValue = MAX_SCALE;
     }
-    scaleControlInput.value = currentValue + '%';
+    scaleControlInputElement.value = currentValue + '%';
     imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
   };
 
@@ -59,19 +72,19 @@
 
   var closeImgUpload = function () {
     imgUploadElement.classList.add('hidden');
-    imgUploadCancelButton.removeEventListener('click', onClickCloseImgUpload);
+    imgUploadCancelButtonElement.removeEventListener('click', onClickCloseImgUpload);
     scaleSmallerElement.removeEventListener('click', onClickPreviewSmaller);
     scaleBiggerElement.removeEventListener('click', onClickPreviewBigger);
-    imgUploadCancelButton.removeEventListener('keydown', onImgUploadCancelEnterPress);
+    imgUploadCancelButtonElement.removeEventListener('keydown', onImgUploadCancelEnterPress);
     effectLevelPinElement.removeEventListener('mouseup', updateEffectLevel);
     hashtagsElement.removeEventListener('input', checkHashtagsValidity);
     effectLevelPinElement.removeEventListener('mousedown', onMouseDown);
 
-    imgUploadForm.reset();
+    imgUploadFormElement.reset();
   };
 
   var onImgUploadCancelEnterPress = function (evt) {
-    if (evt.keyCode === KeyCode.ENTER && evt.target === imgUploadCancelButton) {
+    if (evt.keyCode === KeyCode.ENTER && evt.target === imgUploadCancelButtonElement) {
       closeImgUpload();
     }
   };
@@ -93,8 +106,8 @@
 
     var hashtags = hashtagsString.split(' ');
 
-    if (hashtags.length > 5) {
-      hashtagsElement.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+    if (hashtags.length > HashtagsLimitValue.MAX_COUNT) {
+      hashtagsElement.setCustomValidity(HashtagsErrorText.MAX_COUNT);
       return;
     }
 
@@ -104,28 +117,28 @@
 
     for (var i = 0; i < hashtags.length; i++) {
       if (hashtags[i][0] !== '#') {
-        hashtagsElement.setCustomValidity('Хэш-тег начинается с символа # (решётка): ' + hashtags[i]);
+        hashtagsElement.setCustomValidity(HashtagsErrorText.FIRST_SHARP + hashtags[i]);
         return;
       }
 
       if (hashtags[i].length === 1) {
-        hashtagsElement.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
+        hashtagsElement.setCustomValidity(HashtagsErrorText.SHARP_ONLY);
         return;
       }
 
-      if (hashtags[i].length > 20) {
-        hashtagsElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку: ' + hashtags[i]);
+      if (hashtags[i].length > HashtagsLimitValue.MAX_LENGTH) {
+        hashtagsElement.setCustomValidity(HashtagsErrorText.MAX_LENGTH + hashtags[i]);
         return;
       }
 
       if (hashtags[i].indexOf('#', 1) !== -1) {
-        hashtagsElement.setCustomValidity('Хеш-тег не может содержать более одной решётки: ' + hashtags[i]);
+        hashtagsElement.setCustomValidity(HashtagsErrorText.MORE_THAN_ONE_SHARP + hashtags[i]);
         return;
       }
 
       hashtags.findIndex(function (elem, index) {
         if (elem === hashtags[i] && i !== index) {
-          hashtagsElement.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды: ' + hashtags[i]);
+          hashtagsElement.setCustomValidity(HashtagsErrorText.DUBLICATE + hashtags[i]);
           return;
         }
       });
@@ -279,19 +292,21 @@
   });
 
   var resetForm = function () {
-    scaleControlInput.value = '100%';
+    scaleControlInputElement.value = '100%';
     effectLevelValueElement.value = '100';
     effectElement.value = 'none';
     currentEffect = 'none';
     hashtagsElement.value = '';
     descriptionElement.value = '';
     imgUploadPreviewElement.style.transform = 'scale(1)';
+    hashtagsElement.setCustomValidity('');
+    resetEffectLevel();
   };
 
   var onLoad = function () {
     closeImgUpload();
     window.message.open('success');
-    imgUploadLabel.classList.add('hidden');
+    imgUploadLabelElement.classList.add('hidden');
   };
 
   var onError = function () {
@@ -299,16 +314,20 @@
     window.message.open('error');
   };
 
-  imgUploadForm.addEventListener('submit', function (evt) {
+  imgUploadFormElement.addEventListener('submit', function (evt) {
     effectElement.value = currentEffect;
-    window.backend.save(new FormData(imgUploadForm), onLoad, onError);
+    window.backend.save(new FormData(imgUploadFormElement), onLoad, onError);
     evt.preventDefault();
   });
 
   window.form = {
     open: function () {
-      imgUploadCancelButton.addEventListener('click', onClickCloseImgUpload);
-      imgUploadCancelButton.addEventListener('keydown', onImgUploadCancelEnterPress);
+      if (imgUploadInput.files.length > 0) {
+        imgUploadPreviewElement.src = URL.createObjectURL(imgUploadInput.files[0]);
+      }
+
+      imgUploadCancelButtonElement.addEventListener('click', onClickCloseImgUpload);
+      imgUploadCancelButtonElement.addEventListener('keydown', onImgUploadCancelEnterPress);
       document.addEventListener('keydown', onImgUploadEscPress);
 
       scaleSmallerElement.addEventListener('click', onClickPreviewSmaller);

@@ -1,64 +1,68 @@
 'use strict';
 
-var filterPopularElement = document.getElementById('filter-popular');
-var filterRandomElement = document.getElementById('filter-random');
-var filterDiscussedElement = document.getElementById('filter-discussed');
-var picturesListElement = document.querySelector('.pictures');
-var pictures = [];
+(function () {
 
-var searchParentElementWithClassname = function (element, clss) {
-  if (element.classList.contains(clss)) {
-    return element;
-  }
-  if (element.parentElement === null) {
-    return null;
-  }
-  return searchParentElementWithClassname(element.parentElement, clss);
-};
+  var filterPopularElement = document.getElementById('filter-popular');
+  var filterRandomElement = document.getElementById('filter-random');
+  var filterDiscussedElement = document.getElementById('filter-discussed');
+  var picturesListElement = document.querySelector('.pictures');
+  var pictures = [];
 
-var openBigPicture = function (evt) {
-  var parentElement = searchParentElementWithClassname(evt.target, 'picture');
-  if (parentElement !== null) {
-    var clickedPictureSrc = parentElement.querySelector('.picture__img').attributes['src'].value;
+  var searchParentElementWithClassname = function (element, clss) {
+    if (element.classList.contains(clss)) {
+      return element;
+    }
+    if (element.parentElement === null) {
+      return null;
+    }
+    return searchParentElementWithClassname(element.parentElement, clss);
+  };
 
-    window.preview.render(
-        pictures.find(function (element) {
-          if (element.url !== clickedPictureSrc) {
-            return false;
-          }
-          return true;
-        }));
-  }
-};
+  var openBigPicture = function (evt) {
+    var parentElement = searchParentElementWithClassname(evt.target, 'picture');
+    if (parentElement !== null) {
+      var clickedPictureSrc = parentElement.querySelector('.picture__img').attributes['src'].value;
 
-var onPictureClick = function (evt) {
-  openBigPicture(evt);
-};
+      window.preview.render(
+          pictures.find(function (element) {
+            if (element.url !== clickedPictureSrc) {
+              return false;
+            }
+            return true;
+          }));
+    }
+  };
 
-filterPopularElement.addEventListener('click', function () {
-  window.filter.onPopularClick(pictures);
-});
+  var onPictureClick = function (evt) {
+    openBigPicture(evt);
+  };
 
-filterRandomElement.addEventListener('click', function () {
-  window.filter.onRandomClick(pictures);
-});
+  filterPopularElement.addEventListener('click', function () {
+    window.filter.onPopularClick(pictures);
+  });
 
-filterDiscussedElement.addEventListener('click', function () {
-  window.filter.onDiscussedClick(pictures);
-});
+  filterRandomElement.addEventListener('click', function () {
+    window.filter.onRandomClick(pictures);
+  });
 
-picturesListElement.addEventListener('click', onPictureClick);
+  filterDiscussedElement.addEventListener('click', function () {
+    window.filter.onDiscussedClick(pictures);
+  });
 
-var onLoad = function (data) {
-  pictures = data.slice();
-  window.gallery.update(data);
-  document.querySelector('.img-filters').classList.remove('img-filters--inactive');
-};
+  picturesListElement.addEventListener('click', onPictureClick);
 
-var onError = function (message) {
-  var errorElement = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
-  errorElement.querySelector('.error__title').textContent = message;
-  document.querySelector('main').appendChild(errorElement);
-};
+  var onLoad = function (data) {
+    pictures = data.slice();
+    window.gallery.update(data);
+    document.querySelector('.img-filters').classList.remove('img-filters--inactive');
+  };
 
-window.backend.load(onLoad, onError);
+  var onError = function (message) {
+    var errorElement = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+    errorElement.querySelector('.error__title').textContent = message;
+    document.querySelector('main').appendChild(errorElement);
+  };
+
+  window.backend.load(onLoad, onError);
+
+})();
