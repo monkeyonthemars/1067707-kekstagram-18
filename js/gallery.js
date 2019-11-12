@@ -2,6 +2,9 @@
 
 (function () {
 
+  var picturesListElement = document.querySelector('.pictures');
+  var inputImgPathElement = document.querySelector('.img-upload__input');
+
   var renderListPictures = function (listPictures) {
     var fragment = document.createDocumentFragment();
 
@@ -14,14 +17,11 @@
 
   window.gallery = {
     update: function (data) {
-      var picturesListElement = document.querySelector('.pictures');
-      var inputImgPathElement = document.querySelector('.img-upload__input');
       var delPicturesElement = document.querySelectorAll('.picture');
 
       delPicturesElement.forEach(function (el) {
         el.remove();
       });
-
       picturesListElement.appendChild(renderListPictures(data));
       inputImgPathElement.addEventListener('change', window.form.open);
     }

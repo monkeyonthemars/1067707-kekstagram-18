@@ -3,11 +3,12 @@
 (function () {
 
   var TIMEOUT = 10000;
+  var StatusCode = {
+    OK: 200
+  };
 
-  var getXMLHttpRequest = function (URL, method, onLoad, onError, data) {
-    var StatusCode = {
-      OK: 200
-    };
+  var getXMLHttpRequest = function (onLoad, onError) {
+
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -30,27 +31,29 @@
 
     xhr.timeout = TIMEOUT;
 
-    xhr.open(method, URL);
-
-    if (data) {
-      xhr.send(data);
-    } else {
-      xhr.send();
-    }
+    return xhr;
 
   };
 
   window.backend = {
     load: function (onLoad, onError) {
 
-      getXMLHttpRequest('https://js.dump.academy/kekstagram/data', 'GET', onLoad, onError);
+      var xhr = getXMLHttpRequest(onLoad, onError);
+      xhr.open('GET', 'https://js.dump.academy/kekstagram/data');
+      xhr.send();
 
     },
     save: function (data, onLoad, onError) {
 
-      getXMLHttpRequest('https://js.dump.academy/kekstagram', 'POST', onLoad, onError, data);
+      var xhr = getXMLHttpRequest(onLoad, onError);
+      xhr.open('POST', 'https://js.dump.academy/kekstagram');
+      xhr.send(data);
 
     },
+    KeyCode: {
+      ENTER: 13,
+      ESC: 27
+    }
   };
 
 })();
