@@ -2,9 +2,6 @@
 
 (function () {
 
-  var filterPopularElement = document.getElementById('filter-popular');
-  var filterRandomElement = document.getElementById('filter-random');
-  var filterDiscussedElement = document.getElementById('filter-discussed');
   var picturesListElement = document.querySelector('.pictures');
   var pictures = [];
 
@@ -33,26 +30,13 @@
     }
   };
 
-  var onPictureClick = function (evt) {
+  picturesListElement.addEventListener('click', function (evt) {
     openBigPicture(evt);
-  };
-
-  filterPopularElement.addEventListener('click', function () {
-    window.filter.onPopularClick(pictures);
   });
-
-  filterRandomElement.addEventListener('click', function () {
-    window.filter.onRandomClick(pictures);
-  });
-
-  filterDiscussedElement.addEventListener('click', function () {
-    window.filter.onDiscussedClick(pictures);
-  });
-
-  picturesListElement.addEventListener('click', onPictureClick);
 
   var onLoad = function (data) {
     pictures = data.slice();
+    window.filter.init(pictures);
     window.gallery.update(data);
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };
