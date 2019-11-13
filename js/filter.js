@@ -25,29 +25,22 @@
     var sourcePictures = pictures.slice();
     var randomPictures = [];
 
-    sourcePictures.forEach(function () {
-      if (randomPictures.length >= RANDOM_PICTURES_COUNT) {
-        return;
-      }
+    for (var i = 0; randomPictures.length < RANDOM_PICTURES_COUNT; i++) {
       var randomIndex = Math.round(Math.random() * (sourcePictures.length - 1));
       var randomElement = sourcePictures[randomIndex];
       randomPictures.push(randomElement);
       sourcePictures.splice(randomIndex, 1);
-    });
+    }
 
     makeButtonActive(filterRandomElement);
     window.gallery.update(randomPictures);
   });
 
   var onDiscussedClick = window.debounce(function (pictures) {
-    var discussedPictures = pictures.slice();
-
-    discussedPictures.sort(function (first, second) {
-      return second.comments.length - first.comments.length;
-    });
-
     makeButtonActive(filterDiscussedElement);
-    window.gallery.update(discussedPictures);
+    window.gallery.update(pictures.slice().sort(function (first, second) {
+      return second.comments.length - first.comments.length;
+    }));
   });
 
   window.filter = {
