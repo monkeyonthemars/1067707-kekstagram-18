@@ -36,7 +36,7 @@
 
   var onLoad = function (data) {
     pictures = data.slice();
-    window.filter.init(pictures);
+    window.filter.init(data);
     window.gallery.update(data);
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };

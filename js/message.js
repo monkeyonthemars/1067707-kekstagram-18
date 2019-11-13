@@ -15,7 +15,7 @@
   };
 
   var onSuccessMessageEscPress = function (evt) {
-    if (evt.keyCode === window.backend.KeyCode.ESC) {
+    if (evt.keyCode === window.util.KeyCode.ESC) {
       window.message.close('success');
     }
   };
@@ -31,7 +31,7 @@
   };
 
   var onErrorMessageEscPress = function (evt) {
-    if (evt.keyCode === window.backend.KeyCode.ESC) {
+    if (evt.keyCode === window.util.KeyCode.ESC) {
       window.message.close('error');
     }
   };

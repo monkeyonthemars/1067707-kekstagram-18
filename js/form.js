@@ -57,19 +57,19 @@
     imgUploadPreviewElement.style.transform = 'scale(' + currentValue / MAX_SCALE + ')';
   };
 
-  var onPreviewSmallerClick = function () {
+  var onZoomOutClick = function () {
     scalePreviewSmaller();
   };
 
-  var onPreviewBiggerClick = function () {
+  var onZoomInClick = function () {
     scalePreviewBigger();
   };
 
   var closeImgUpload = function () {
     imgUploadElement.classList.add('hidden');
     imgUploadCancelButtonElement.removeEventListener('click', onCloseImgUploadClick);
-    scaleSmallerElement.removeEventListener('click', onPreviewSmallerClick);
-    scaleBiggerElement.removeEventListener('click', onPreviewBiggerClick);
+    scaleSmallerElement.removeEventListener('click', onZoomOutClick);
+    scaleBiggerElement.removeEventListener('click', onZoomInClick);
     imgUploadCancelButtonElement.removeEventListener('keydown', onImgUploadCancelEnterPress);
     effectLevelPinElement.removeEventListener('mouseup', updateEffectLevel);
     hashtagsElement.removeEventListener('input', checkHashtagsValidity);
@@ -80,7 +80,7 @@
   };
 
   var onImgUploadCancelEnterPress = function (evt) {
-    if (evt.keyCode === window.backend.KeyCode.ENTER && evt.target === imgUploadCancelButtonElement) {
+    if (evt.keyCode === window.util.KeyCode.ENTER && evt.target === imgUploadCancelButtonElement) {
       closeImgUpload();
     }
   };
@@ -146,7 +146,7 @@
   };
 
   var onImgUploadEscPress = function (evt) {
-    if (evt.keyCode === window.backend.KeyCode.ESC) {
+    if (evt.keyCode === window.util.KeyCode.ESC) {
       closeImgUpload();
     }
   };
@@ -325,8 +325,8 @@
       imgUploadCancelButtonElement.addEventListener('keydown', onImgUploadCancelEnterPress);
       document.addEventListener('keydown', onImgUploadEscPress);
 
-      scaleSmallerElement.addEventListener('click', onPreviewSmallerClick);
-      scaleBiggerElement.addEventListener('click', onPreviewBiggerClick);
+      scaleSmallerElement.addEventListener('click', onZoomOutClick);
+      scaleBiggerElement.addEventListener('click', onZoomInClick);
 
       effectLevelPinElement.addEventListener('mouseup', updateEffectLevel);
       effectLevelPinElement.addEventListener('mousedown', onMouseDown);

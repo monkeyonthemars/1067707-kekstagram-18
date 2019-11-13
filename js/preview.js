@@ -40,7 +40,7 @@
 
     if (currentCommentsCount >= commentsCount) {
       currentCommentsCount = commentsCount;
-      commentsLoaderElement.innerHTML = '';
+      commentsLoaderElement.remove();
     }
 
     for (startPosition; startPosition < currentCommentsCount; startPosition++) {
@@ -64,7 +64,7 @@
   };
 
   var onBigPictureEscPress = function (evt) {
-    if (evt.keyCode === window.backend.KeyCode.ESC) {
+    if (evt.keyCode === window.util.KeyCode.ESC) {
       closeBigPicture();
     }
   };

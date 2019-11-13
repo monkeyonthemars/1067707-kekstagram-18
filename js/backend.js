@@ -49,10 +49,6 @@
       xhr.open('POST', 'https://js.dump.academy/kekstagram');
       xhr.send(data);
 
-    },
-    KeyCode: {
-      ENTER: 13,
-      ESC: 27
     }
   };
 
